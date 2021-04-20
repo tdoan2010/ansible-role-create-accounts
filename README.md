@@ -84,7 +84,7 @@ Suppose that we put the above setup in `vars.yml` file. It can be used in a play
   vars_files:
     - vars/vars.yml
   roles:
-    - role: tdoan.create_accounts
+    - role: tdoan2010.create_accounts
 ```
 
 License
