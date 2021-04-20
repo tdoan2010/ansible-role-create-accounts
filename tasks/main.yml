@@ -1,0 +1,76 @@
+- name: Ensure that sudo and ssh group exist
+  group:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - sudo
+    - ssh
+
+- name: Ensure sudo group have sudo right
+  lineinfile:
+    dest: "/etc/sudoers"
+    state: "present"
+    regexp: "^%sudo"
+    line: "%sudo ALL=(ALL:ALL) ALL"
+
+- name: Ensure users in ssh group can ssh
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^AllowGroups"
+    line: "AllowGroups ssh"
+  notify: "Restart sshd"
+
+- name: Ensure that all primary groups exist
+  group:
+    name: "{{ item.primary_group }}"
+    state: present
+  loop: "{{ user_accounts }}"
+  when: item.primary_group is defined
+  loop_control:
+    label: "{{ item.primary_group }}"
+
+- name: Ensure that other groups exist
+  group:
+    name: "{{ item.1 }}"
+    state: present
+  loop: "{{ user_accounts | subelements('other_groups', skip_missing=True) }}"
+  loop_control:
+    label: "{{ item.1 }}"
+
+- name: Create user accounts
+  user:
+    name: "{{ item.username }}"
+    password: "{{ item.password | password_hash('sha512') if item.password is defined else '!' }}"
+    update_password: "{{ item.update_password if item.update_password is defined else default_update_password }}"
+    group: "{{ item.primary_group | default(omit) }}"
+    groups: "{{ item.other_groups | default(omit) }}"
+    comment: "{{ item.comment | default(omit) }}"
+    state: present
+    shell: /bin/bash
+    append: "{{ item.groups_append | default(omit) }}"
+  loop: "{{ user_accounts }}"
+  loop_control:
+    label: "{{ item.username }}"
+
+- name: Add authorized keys to accounts
+  authorized_key:
+    user: "{{ item.0.username }}"
+    key: "{{ lookup('file', item.1) }}"
+    state: present
+  loop: "{{ user_accounts | subelements('authorized_key', skip_missing=True) }}"
+  loop_control:
+    label: "{{ item.0.username }} => {{ lookup('file', item.1) }}"
+
+- name: Remove AllowUsers in SSH config
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^AllowUsers"
+    state: absent
+  notify: "Restart sshd"
+
+- name: Disable root login via SSH
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin no"
+  notify: "Restart sshd"

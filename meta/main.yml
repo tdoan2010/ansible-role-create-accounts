@@ -1,0 +1,30 @@
+galaxy_info:
+  role_name: create_accounts
+  author: Triet Doan
+  description: Create user accounts on Linux platforms
+  company: GWDG
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+    - name: macOS
+      versions:
+        - all
+
+  galaxy_tags:
+    - server
+    - user
+    - account
+    - virtualmachine
+  
