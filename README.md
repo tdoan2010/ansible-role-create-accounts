@@ -96,3 +96,5 @@ Author Information
 ------------------
 
 This role was created in 2021 by [Triet Doan](mailto:triet.doan@gwdg.de).
+
+[1]: https://man7.org/linux/man-pages/man1/passwd.1.html
