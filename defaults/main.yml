@@ -1,1 +1,2 @@
 default_update_password: on_create
+sudo_without_password: false

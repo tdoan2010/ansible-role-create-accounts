@@ -35,6 +35,12 @@ following key-value pairs:
 | authorized_key  | list of string   |               | a list of paths to public keys, which will be added under the created account.                                                                                                                                                                                    |
 | update_password | always/on_create | on_create     | `always` will update passwords if the current password and the input one are different. `on_create` will set the password only for newly created accounts.                                                                                                        |
 
+In addition, there is a global variable to set:
+
+| Key                   | Data type | Default value | Note                                                                                                                     |
+|-----------------------|-----------|---------------|--------------------------------------------------------------------------------------------------------------------------|
+| sudo_without_password | boolean   | false         | If this is set to true, all users in the `sudo` group can use the `sudo` command without having to enter their password. |
+
 Example Usage
 -------------
 
@@ -42,6 +48,7 @@ Suppose that we want to create a new account called `tdoan` and modified the exi
 the `user_accounts` object as follows:
 
 ```yaml
+sudo_without_password: true
 user_accounts:
   - username: tdoan
     password: "my_secret"
@@ -74,6 +81,8 @@ user_accounts:
 * For account `cloud`:
     * It keeps whatever groups it has plus two more groups: `sudo` and `ssh`.
     * 1 public key is added under this account.
+* For both accounts:
+    * They can use `sudo` without password.
 
 Suppose that we put the above setup in `vars.yml` file. It can be used in a playbook like this:
 
