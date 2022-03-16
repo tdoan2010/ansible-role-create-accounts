@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: create_accounts
+  role_name: manage_accounts
   author: Triet Doan
   description: Create user accounts on Linux platforms
   company: GWDG
