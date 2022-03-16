@@ -37,7 +37,7 @@
   loop: "{{ user_accounts }}"
   when: item.primary_group is defined
   loop_control:
-    label: "{{ item.primary_group | default(None) }}"
+    label: "{{ item.primary_group | default(omit) }}"
 
 - name: Ensure that other groups exist
   group:
